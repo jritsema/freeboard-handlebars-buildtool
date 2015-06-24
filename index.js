@@ -1,45 +1,56 @@
+#!/usr/bin/env node
+
 'use strict';
 
 var fs = require('fs');
 
-var sourceDir = process.argv[2];
-var targetFile = process.argv[3];
+process.stdin.setEncoding('utf8');
 
-//load package.json
-var packagejson = require(sourceDir + '/package.json');
-var widgetId = packagejson.name;
-console.log('building %s...', widgetId);
+var dashboardJson = '';
 
-//read and parse targetFile
-var targetFileContents = fs.readFileSync(targetFile);
-var dashboard = JSON.parse(targetFileContents);
+process.stdin.on('readable', function() {
+  var chunk = process.stdin.read();
+  if (chunk !== null)
+    dashboardJson += chunk;
+});
 
-//find widget based on id
-var widget = findWidget(dashboard);
-if (widget) {
+process.stdin.on('end', function() {
 
-  //read model.js
-  var model = fs.readFileSync(sourceDir + '/model.js', { encoding: 'utf8' });
+  //deserialize dashboard json
+  var dashboard = JSON.parse(dashboardJson);
 
-  //read view.html
-  var view = fs.readFileSync(sourceDir + '/view.html', { encoding: 'utf8' });
+  //load package.json
+  var packageJson = fs.readFileSync('./package.json', { encoding: 'utf8' });
+  var widgetId = JSON.parse(packageJson).name;
 
-  //read helpers.js
-  var helpers = fs.readFileSync(sourceDir + '/helpers.js', { encoding: 'utf8' });
+  //find widget based on id
+  var widget = findWidget(dashboard, widgetId);
+  if (widget) {
 
-  //update dashboard
-  widget.settings.model = model;
-  widget.settings.view = view;
-  widget.settings.helpers = helpers;
+    //read model.js
+    var model = fs.readFileSync('./model.js', { encoding: 'utf8' });
 
-  //serialize and re-write targetFile
-  fs.writeFileSync(targetFile, JSON.stringify(dashboard, null, 2));
+    //read view.html
+    var view = fs.readFileSync('./view.html', { encoding: 'utf8' });
 
-};
+    //read helpers.js
+    var helpers = fs.readFileSync('./helpers.js', { encoding: 'utf8' });
 
-console.log('build complete - %s', targetFile);
+    //update dashboard
+    widget.settings.model = model;
+    widget.settings.view = view;
+    widget.settings.helpers = helpers;
 
-function findWidget(dashboard) {
+    //serialize and write to stdout
+    var newDashboardJson = JSON.stringify(dashboard, null, 2);
+    console.log(newDashboardJson);
+  }
+  else
+    throw 'Could not find widget in dashboard: ' + widgetId;
+
+});
+
+function findWidget(dashboard, widgetId) {
   for (var i in dashboard.panes) {
     var pane = dashboard.panes[i];
     for (var j in pane.widgets) {

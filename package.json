@@ -3,9 +3,10 @@
   "version": "1.0.0",
   "description": "A tool that builds a freeboard-handlebars widget package directory into a dashboard.json file that can be loaded by freeboard",
   "main": "index.js",
-  "scripts": {
-    "test": ""
-  },
+  "bin": {
+    "freeboard-handlebars-buildtool": "index.js"
+  },  
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/jritsema/freeboard-handlebars-buildtool.git"
@@ -14,7 +15,7 @@
     "freeboard",
     "freeboard-handlebars"
   ],
-  "author": "John Ritsema",
+  "author": "jritsema",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/jritsema/freeboard-handlebars-buildtool/issues"
