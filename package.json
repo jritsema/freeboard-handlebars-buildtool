@@ -1,6 +1,6 @@
 {
   "name": "freeboard-handlebars-buildtool",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A tool that builds a freeboard-handlebars widget package directory into a dashboard.json file that can be loaded by freeboard",
   "main": "index.js",
   "bin": {

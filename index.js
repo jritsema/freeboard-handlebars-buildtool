@@ -55,7 +55,7 @@ function findWidget(dashboard, widgetId) {
     var pane = dashboard.panes[i];
     for (var j in pane.widgets) {
       var widget = pane.widgets[j];
-      if (widget.id && widget.id === widgetId)
+      if (widget.title && widget.title === widgetId)
         return widget;
     }
   }
